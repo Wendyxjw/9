@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html ng-app="exampleApp">
+<title>9/title>
+<script src="angular/angular.js"></script>
+<link href="bootstrap-3.3.5-dist/css/bootstrap.css">
+<link href="bootstrap-3.3.5-dist/css/bootstrap-theme.css">
+<script>
+    var myApp = angular.module("exampleApp", []);
+    myApp.controller("dayCtrl", function ($scope,days) {
+        var dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        $scope.day = days.today;
+        $scope.tomorrow = days.today;
+
+    });
+    myApp.directive("highlight", function ($filter) {
+        var dayFilter = $filter("dayName");
+        return function (scope, element, attr) {
+            if (dayFilter(scope.day) == attr["highlight"]) {
+                element.css("color", "red");
+            }
+        }
+    });
+    myApp.filter("dayName", function () {
+        var dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        return function (input) {
+            return angular.isNumber(input) ? dayName[input] : input;
+        }
+    });
+
+    var now=new Date();
+    myApp.value("nowValue",now);//value()创建返回固定值和对象的服务
+    myApp.service("days", function (nowValue) {
+        this.today = nowValue.getDay();
+        this.tomorrow = this.today + 1;
+    })
+
+</script>
+<body>
+<div class="panel" ng-controller="dayCtrl">
+    <div class="page-header">
+        <h3>AngularJS App</h3>
+    </div>
+    <h4>Today is {{day||"(unknown)"|dayName}}</h4>
+    <h4>Tomorrow is {{tomorrow||"(unknown)"|dayName}}</h4>
+    <h4 highlight="Friday">Today is {{day||"(unknown)"|dayName}}</h4>
+</div>
+
+
+</body>
+</html>
